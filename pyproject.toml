@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "eink-calendar"
+version = "0.1.0"
+description = ""
+authors = ["Tyler Compton <xaviosx@gmail.com>"]
+readme = "README.md"
+packages = [ { include = "eink_calendar" } ]
+
+[tool.poetry.scripts]
+eink_calendar = "eink_calendar.__main__:main"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+inky = {extras = ["example-depends", "rpi"], version = "^1.5.0"}
+pillow = "^10.0.1"
+pysdl2 = "^0.9.16"
+google-api-python-client = "^2.100.0"
+google-auth-httplib2 = "^0.1.1"
+google-auth-oauthlib = "^1.1.0"
+pyxdg = "^0.28"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
