@@ -27,4 +27,3 @@ class Text:
     def set_position(self, x: int, y: int) -> None:
         self.rect.x = x
         self.rect.y = y
-

@@ -28,7 +28,7 @@ class EventStream:
 
     def _run(self):
         last_poll = 0
-        last_api_events = []
+        last_api_events = None
 
         while self._running:
             if time() - last_poll > self._poll_delay:
@@ -42,4 +42,3 @@ class EventStream:
                 last_poll = time()
 
             sleep(0.01)
-

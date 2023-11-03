@@ -9,6 +9,7 @@ from time import sleep, time
 from PIL import Image
 from sdl2 import *
 from sdl2.sdlttf import *
+from xdg import BaseDirectory
 
 from . import ui, api
 from .display import Display
@@ -16,8 +17,6 @@ from .display import Display
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 448
-
-DRAW_DELAY = 600
 
 
 def screenshot(window, renderer) -> Image:
@@ -55,9 +54,10 @@ def screenshot(window, renderer) -> Image:
     if not dest:
         raise RuntimeError("Could not CreateRGBSurfaceFrom")
 
-
-    SDL_SaveBMP(dest, b"render.bmp")
-    return Image.open("render.bmp")
+    cache_path = Path(BaseDirectory.save_cache_path("eink_calendar"))
+    image_path = cache_path / "render.bmp"
+    SDL_SaveBMP(dest, str(image_path).encode())
+    return Image.open(image_path)
 
 
 BLACK = SDL_Color(0, 0, 0)
@@ -97,12 +97,12 @@ def main() -> int:
         return -1
 
     font_file = Path(__file__).parent / "lora.ttf"
-    print(font_file)
     day_font = TTF_OpenFont(str(font_file).encode(), 36)
     times_font = TTF_OpenFont(str(font_file).encode(), 16)
 
-    day = ui.Text(renderer, day_font, "Saturday, September 23rd", BLACK)
-    day.set_position(int(SCREEN_WIDTH / 2 - day.rect.w / 2), 1)
+    today = datetime.date.today()
+    day_text = ui.Text(renderer, day_font, today.strftime("%A, %B %d"), BLACK)
+    day_text.set_position(int(SCREEN_WIDTH / 2 - day_text.rect.w / 2), 1)
 
     quit = False
 
@@ -121,7 +121,7 @@ def main() -> int:
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255)
         SDL_RenderClear(renderer)
 
-        day.draw(renderer)
+        day_text.draw(renderer)
 
         for ui_event in ui_events:
             ui_event.draw(renderer)
@@ -150,6 +150,8 @@ def main() -> int:
     event_stream.close()
     print("Waiting for display to finish up...")
     display.close()
+
+    return 0
 
 
 if __name__ == "__main__":

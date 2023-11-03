@@ -7,6 +7,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from xdg import BaseDirectory
 
 from .event import Event
 
@@ -40,14 +41,15 @@ class Client:
             events += [Event(calendar, e) for e in result.get("items", [])]
 
         # Filter for today's events
-        events = [e for e in events if e.start_time.day == datetime.datetime.now().day]
+        events = [e for e in events if e.start_time.date() == datetime.date.today()]
 
         return events
 
     def _get_credentials(self) -> Credentials:
         creds = None
+        data_path = Path(BaseDirectory.save_data_path("eink_calendar"))
 
-        token = Path("token.json")
+        token = data_path / "token.json"
         if token.is_file():
             creds = Credentials.from_authorized_user_file(str(token), SCOPES)
         if creds is None or not creds.valid:
@@ -55,10 +57,9 @@ class Client:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    "credentials.json", SCOPES
+                    str(data_path / "credentials.json"), SCOPES
                 )
                 creds = flow.run_local_server(port=0)
             token.write_text(creds.to_json())
 
         return creds
-

@@ -28,4 +28,3 @@ class Display:
                 self._inky.show()
             except Empty:
                 pass
-
