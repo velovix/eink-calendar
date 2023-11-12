@@ -3,6 +3,8 @@ from queue import Queue, Empty
 from time import time, sleep
 from typing import Optional
 
+from httplib2 import HttpLib2Error
+
 from .client import Client
 from .event import Event
 
@@ -31,14 +33,19 @@ class EventStream:
         last_api_events = None
 
         while self._running:
-            if time() - last_poll > self._poll_delay:
-                print("Polling for events")
+            sleep(0.01)
+
+            if time() - last_poll < self._poll_delay:
+                continue
+
+            print("Polling for events")
+            try:
                 api_events = self._client.get_events()
                 if api_events != last_api_events:
                     print("Event changes detected")
                     last_api_events = api_events
                     self._output.put(api_events)
+            except HttpLib2Error as ex:
+                print(f"Could not get events: {ex}")
 
-                last_poll = time()
-
-            sleep(0.01)
+            last_poll = time()
