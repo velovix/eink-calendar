@@ -13,7 +13,11 @@ class Text:
         color: SDL_Color,
         x: int = 0,
         y: int = 0,
+        max_chars: int = 0,
     ):
+        if max_chars > 0 and len(text) > max_chars:
+            text = text[: max_chars - 3] + "..."
+
         surface = TTF_RenderText_Blended(font, text.encode(), color)
         self.texture = SDL_CreateTextureFromSurface(renderer, surface)
         width = ctypes.c_int(0)

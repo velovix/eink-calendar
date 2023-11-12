@@ -38,7 +38,9 @@ class Event:
             text += f"{time_str} - "
         text += f"{api_event.summary}"
 
-        self.ui_text = ui.Text(renderer, font, text, SDL_Color(0, 0, 0, 255), x, y)
+        self.ui_text = ui.Text(
+            renderer, font, text, SDL_Color(0, 0, 0, 255), x=x, y=y, max_chars=60
+        )
         self.ui_text.set_position(x + 10, int(y + (self.ui_text.rect.h / 2)))
 
     def draw(self, renderer: SDL_Renderer) -> None:
