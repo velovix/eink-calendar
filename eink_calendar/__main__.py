@@ -6,8 +6,8 @@ from argparse import ArgumentParser
 import logging
 
 from PIL import Image
-from sdl2 import *
-from sdl2.sdlttf import *
+import sdl2
+from sdl2 import sdlttf
 from xdg import BaseDirectory
 
 from . import ui, api
@@ -18,8 +18,8 @@ SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 448
 
 
-def screenshot(window, renderer) -> Image:
-    src = SDL_GetWindowSurface(window)
+def screenshot(window: sdl2.SDL_Window, renderer: sdl2.SDL_Renderer) -> Image:
+    src = sdl2.SDL_GetWindowSurface(window)
     if not src:
         raise RuntimeError("Could not get window surface")
 
@@ -29,7 +29,7 @@ def screenshot(window, renderer) -> Image:
         * src.contents.h
         * src.contents.format.contents.BytesPerPixel
     )()
-    rc = SDL_RenderReadPixels(
+    rc = sdl2.SDL_RenderReadPixels(
         renderer,
         src.contents.clip_rect,
         src.contents.format.contents.format,
@@ -39,7 +39,7 @@ def screenshot(window, renderer) -> Image:
     if rc != 0:
         raise RuntimeError("Could not call RenderReadPixels")
 
-    dest = SDL_CreateRGBSurfaceFrom(
+    dest = sdl2.SDL_CreateRGBSurfaceFrom(
         pixel_data,
         src.contents.w,
         src.contents.h,
@@ -55,12 +55,12 @@ def screenshot(window, renderer) -> Image:
 
     cache_path = Path(BaseDirectory.save_cache_path("eink_calendar"))
     image_path = cache_path / "render.bmp"
-    SDL_SaveBMP(dest, str(image_path).encode())
+    sdl2.SDL_SaveBMP(dest, str(image_path).encode())
     return Image.open(image_path)
 
 
-BLACK = SDL_Color(0, 0, 0)
-GRAY = SDL_Color(150, 150, 150)
+BLACK = sdl2.SDL_Color(0, 0, 0)
+GRAY = sdl2.SDL_Color(150, 150, 150)
 
 
 def main() -> int:
@@ -82,36 +82,36 @@ def main() -> int:
 
     api_client = api.Client()
 
-    if SDL_Init(SDL_INIT_EVERYTHING) != 0:
+    if sdl2.SDL_Init(sdl2.SDL_INIT_EVERYTHING) != 0:
         logging.error("Could not initialize SDL")
         return -1
 
-    if TTF_Init() != 0:
+    if sdlttf.TTF_Init() != 0:
         logging.error("Could not initialize SDL TTF")
         return -1
 
-    window = SDL_CreateWindow(
+    window = sdl2.SDL_CreateWindow(
         b"eInk Calendar",
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
+        sdl2.SDL_WINDOWPOS_CENTERED,
+        sdl2.SDL_WINDOWPOS_CENTERED,
         SCREEN_WIDTH,
         SCREEN_HEIGHT,
-        SDL_WINDOW_SHOWN,
+        sdl2.SDL_WINDOW_SHOWN,
     )
     if not window:
         logging.error("Could not create window")
         return -1
 
-    renderer = SDL_CreateRenderer(
-        window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    renderer = sdl2.SDL_CreateRenderer(
+        window, -1, sdl2.SDL_RENDERER_ACCELERATED | sdl2.SDL_RENDERER_PRESENTVSYNC
     )
     if not renderer:
         logging.error("Could not create renderer")
         return -1
 
     font_file = Path(__file__).parent / "lora.ttf"
-    day_font = TTF_OpenFont(str(font_file).encode(), 36)
-    times_font = TTF_OpenFont(str(font_file).encode(), 16)
+    day_font = sdlttf.TTF_OpenFont(str(font_file).encode(), 36)
+    times_font = sdlttf.TTF_OpenFont(str(font_file).encode(), 16)
 
     today = datetime.date.today()
     day_text = ui.Text(renderer, day_font, today.strftime("%A, %B %d"), BLACK)
@@ -121,18 +121,18 @@ def main() -> int:
 
     event_stream = api.EventStream(api_client)
 
-    ui_events = []
+    ui_events: list[ui.Event] = []
 
     display = MockDisplay() if args.no_display else EInkDisplay()
 
     while not stop:
-        input_event = SDL_Event()
-        SDL_PollEvent(input_event)
-        if input_event.type == SDL_QUIT:
+        input_event = sdl2.SDL_Event()
+        sdl2.SDL_PollEvent(input_event)
+        if input_event.type == sdl2.SDL_QUIT:
             stop = True
 
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255)
-        SDL_RenderClear(renderer)
+        sdl2.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255)
+        sdl2.SDL_RenderClear(renderer)
 
         day_text.draw(renderer)
 
@@ -157,7 +157,7 @@ def main() -> int:
             image = screenshot(window, renderer)
             display.set_image(image)
 
-        SDL_RenderPresent(renderer)
+        sdl2.SDL_RenderPresent(renderer)
 
     logging.info("Waiting for event stream to stop...")
     event_stream.close()
@@ -165,7 +165,3 @@ def main() -> int:
     display.close()
 
     return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())

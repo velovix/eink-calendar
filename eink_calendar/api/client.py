@@ -15,7 +15,7 @@ SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
 
 class Client:
-    def __init__(self):
+    def __init__(self) -> None:
         self._creds = self._get_credentials()
         self._service = build("calendar", "v3", credentials=self._creds)
 
