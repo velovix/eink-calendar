@@ -14,7 +14,7 @@ class EventStream:
     def __init__(self, client: Client, poll_delay: float = 60):
         self._client = client
         self._poll_delay = poll_delay
-        self._output = Queue()
+        self._output = Queue[list[Event]]()
         self._running = True
         self._thread = Thread(target=self._run)
         self._thread.start()
@@ -29,8 +29,8 @@ class EventStream:
         self._running = False
         self._thread.join()
 
-    def _run(self):
-        last_poll = 0
+    def _run(self) -> None:
+        last_poll = 0.0
         last_api_events = None
 
         while self._running:

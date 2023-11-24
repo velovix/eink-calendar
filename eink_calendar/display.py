@@ -25,9 +25,9 @@ class MockDisplay(Display):
 
 
 class EInkDisplay(Display):
-    def __init__(self):
+    def __init__(self) -> None:
         self._inky = Inky7Colour()
-        self._image_queue = Queue()
+        self._image_queue = Queue[Image]()
         self._running = True
         self._thread = Thread(target=self._run)
         self._thread.start()

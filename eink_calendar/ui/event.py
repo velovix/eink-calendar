@@ -1,7 +1,7 @@
 import ctypes
 
-from sdl2 import *
-from sdl2.sdlttf import *
+import sdl2
+from sdl2 import sdlttf
 
 from .. import api, ui
 
@@ -16,16 +16,20 @@ class Event:
     START_Y = 65
 
     def __init__(
-        self, renderer: SDL_Renderer, font: TTF_Font, api_event: api.Event, y: int
+        self,
+        renderer: sdl2.SDL_Renderer,
+        font: sdlttf.TTF_Font,
+        api_event: api.Event,
+        y: int,
     ):
         x = self.START_X
 
-        self.color = SDL_Color(
+        self.color = sdl2.SDL_Color(
             r=api_event.color[0], g=api_event.color[1], b=api_event.color[2], a=255
         )
 
-        self.rect = SDL_Rect(x=x, y=y, w=self.WIDTH, h=self.HEIGHT)
-        self.inner_rect = SDL_Rect(
+        self.rect = sdl2.SDL_Rect(x=x, y=y, w=self.WIDTH, h=self.HEIGHT)
+        self.inner_rect = sdl2.SDL_Rect(
             x=x + self.THICKNESS,
             y=y + self.THICKNESS,
             w=self.WIDTH - self.THICKNESS * 2,
@@ -39,17 +43,17 @@ class Event:
         text += f"{api_event.summary}"
 
         self.ui_text = ui.Text(
-            renderer, font, text, SDL_Color(0, 0, 0, 255), x=x, y=y, max_chars=60
+            renderer, font, text, sdl2.SDL_Color(0, 0, 0, 255), x=x, y=y, max_chars=60
         )
         self.ui_text.set_position(x + 10, int(y + (self.ui_text.rect.h / 2)))
 
-    def draw(self, renderer: SDL_Renderer) -> None:
-        SDL_SetRenderDrawColor(
+    def draw(self, renderer: sdl2.SDL_Renderer) -> None:
+        sdl2.SDL_SetRenderDrawColor(
             renderer, self.color.r, self.color.g, self.color.b, self.color.a
         )
-        SDL_RenderFillRect(renderer, self.rect)
+        sdl2.SDL_RenderFillRect(renderer, self.rect)
 
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255)
-        SDL_RenderFillRect(renderer, self.inner_rect)
+        sdl2.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255)
+        sdl2.SDL_RenderFillRect(renderer, self.inner_rect)
 
         self.ui_text.draw(renderer)
