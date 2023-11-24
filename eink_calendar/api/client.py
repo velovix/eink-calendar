@@ -46,6 +46,8 @@ class Client:
         # Filter for today's events
         events = [e for e in events if e.start_time.date() == datetime.date.today()]
 
+        events = self._sort_events(events)
+
         return events
 
     def _get_credentials(self) -> Credentials:
@@ -71,3 +73,12 @@ class Client:
             token.write_text(creds.to_json())
 
         return creds
+
+    def _sort_events(self, events: list[Event]) -> list[Event]:
+        """Sorts events by their start time, with all-day events always at the start"""
+        all_days = [e for e in events if e.all_day]
+        all_days = sorted(all_days, key=lambda e: e.start_time)
+        non_all_days = [e for e in events if not e.all_day]
+        non_all_days = sorted(non_all_days, key=lambda e: e.start_time)
+
+        return all_days + non_all_days
