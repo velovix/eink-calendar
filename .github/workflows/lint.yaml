@@ -15,5 +15,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Install Dependencies
         run: poetry install --no-interaction
+      - name: Black
+        run: poetry run black --check eink_calendar
       - name: MyPy
         run: poetry run mypy --show-error-codes eink_calendar
