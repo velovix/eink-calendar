@@ -1,10 +1,9 @@
-import sys
 import ctypes
 import faulthandler
 from pathlib import Path
 import datetime
-import json
-from time import sleep, time
+from argparse import ArgumentParser
+import logging
 
 from PIL import Image
 from sdl2 import *
@@ -12,7 +11,7 @@ from sdl2.sdlttf import *
 from xdg import BaseDirectory
 
 from . import ui, api
-from .display import Display
+from .display import MockDisplay, EInkDisplay
 
 
 SCREEN_WIDTH = 600
@@ -24,7 +23,7 @@ def screenshot(window, renderer) -> Image:
     if not src:
         raise RuntimeError("Could not get window surface")
 
-    pixels = (
+    pixel_data = (
         ctypes.c_uint8
         * src.contents.w
         * src.contents.h
@@ -34,14 +33,14 @@ def screenshot(window, renderer) -> Image:
         renderer,
         src.contents.clip_rect,
         src.contents.format.contents.format,
-        pixels,
+        pixel_data,
         src.contents.w * src.contents.format.contents.BytesPerPixel,
     )
     if rc != 0:
         raise RuntimeError("Could not call RenderReadPixels")
 
     dest = SDL_CreateRGBSurfaceFrom(
-        pixels,
+        pixel_data,
         src.contents.w,
         src.contents.h,
         src.contents.format.contents.BitsPerPixel,
@@ -67,14 +66,28 @@ GRAY = SDL_Color(150, 150, 150)
 def main() -> int:
     faulthandler.enable()
 
+    logging.basicConfig(level=logging.INFO)
+
+    parser = ArgumentParser(
+        description="Displays calendar events on an Inky 7-color display"
+    )
+
+    parser.add_argument(
+        "--no-display",
+        action="store_true",
+        help="Do not communicate with an eInk display",
+    )
+
+    args = parser.parse_args()
+
     api_client = api.Client()
 
     if SDL_Init(SDL_INIT_EVERYTHING) != 0:
-        print("Could not initialize SDL", file=sys.stderr)
+        logging.error("Could not initialize SDL")
         return -1
 
     if TTF_Init() != 0:
-        print("Could not initialize SDL TTF", file=sys.stderr)
+        logging.error("Could not initialize SDL TTF")
         return -1
 
     window = SDL_CreateWindow(
@@ -86,14 +99,14 @@ def main() -> int:
         SDL_WINDOW_SHOWN,
     )
     if not window:
-        print("Could not create window", file=sys.stderr)
+        logging.error("Could not create window")
         return -1
 
     renderer = SDL_CreateRenderer(
         window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
     )
     if not renderer:
-        print("Could not create renderer", file=sys.stderr)
+        logging.error("Could not create renderer")
         return -1
 
     font_file = Path(__file__).parent / "lora.ttf"
@@ -104,19 +117,19 @@ def main() -> int:
     day_text = ui.Text(renderer, day_font, today.strftime("%A, %B %d"), BLACK)
     day_text.set_position(int(SCREEN_WIDTH / 2 - day_text.rect.w / 2), 1)
 
-    quit = False
+    stop = False
 
     event_stream = api.EventStream(api_client)
 
     ui_events = []
 
-    display = Display()
+    display = MockDisplay() if args.no_display else EInkDisplay()
 
-    while not quit:
+    while not stop:
         input_event = SDL_Event()
         SDL_PollEvent(input_event)
         if input_event.type == SDL_QUIT:
-            quit = True
+            stop = True
 
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255)
         SDL_RenderClear(renderer)
@@ -146,9 +159,9 @@ def main() -> int:
 
         SDL_RenderPresent(renderer)
 
-    print("Waiting for event stream to stop...")
+    logging.info("Waiting for event stream to stop...")
     event_stream.close()
-    print("Waiting for display to finish up...")
+    logging.info("Waiting for display to finish up...")
     display.close()
 
     return 0

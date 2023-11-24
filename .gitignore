@@ -8,3 +8,6 @@ token.json
 
 render.bmp
 
+# IDE stuff
+.idea/
+

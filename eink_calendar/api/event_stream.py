@@ -1,3 +1,4 @@
+import logging
 from threading import Thread
 from queue import Queue, Empty
 from time import time, sleep
@@ -38,14 +39,14 @@ class EventStream:
             if time() - last_poll < self._poll_delay:
                 continue
 
-            print("Polling for events")
+            logging.info("Polling for events")
             try:
                 api_events = self._client.get_events()
                 if api_events != last_api_events:
-                    print("Event changes detected")
+                    logging.info("Event changes detected")
                     last_api_events = api_events
                     self._output.put(api_events)
             except HttpLib2Error as ex:
-                print(f"Could not get events: {ex}")
+                logging.error(f"Could not get events: {ex}")
 
             last_poll = time()

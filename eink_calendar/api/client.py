@@ -1,3 +1,5 @@
+import logging
+import sys
 from pathlib import Path
 import datetime
 import json
@@ -49,6 +51,11 @@ class Client:
         creds = None
         data_path = Path(BaseDirectory.save_data_path("eink_calendar"))
 
+        credentials_file = data_path / "credentials.json"
+        if not credentials_file.is_file():
+            logging.error(f"Missing credentials file at: {credentials_file}")
+            sys.exit(1)
+
         token = data_path / "token.json"
         if token.is_file():
             creds = Credentials.from_authorized_user_file(str(token), SCOPES)
@@ -57,7 +64,7 @@ class Client:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    str(data_path / "credentials.json"), SCOPES
+                    str(credentials_file), SCOPES
                 )
                 creds = flow.run_local_server(port=0)
             token.write_text(creds.to_json())
