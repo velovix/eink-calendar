@@ -2,13 +2,11 @@ import logging
 import sys
 from pathlib import Path
 import datetime
-import json
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 from xdg import BaseDirectory
 
 from .event import Event
@@ -27,8 +25,11 @@ class Client:
         now = datetime.datetime.utcnow()
         time_min = now - datetime.timedelta(hours=3)
 
+        # Only look at calendars the user selects on their Google Calendar view
+        selected_calendars = [c for c in calendars["items"] if c.get("selected", False)]
+
         events = []
-        for calendar in calendars["items"]:
+        for calendar in selected_calendars:
             result = (
                 self._service.events()
                 .list(
