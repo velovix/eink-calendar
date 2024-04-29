@@ -8,7 +8,7 @@ from PIL import Image
 
 class Display(ABC):
     @abstractmethod
-    def set_image(self, image: Image) -> None:
+    def set_image(self, image: Image.Image) -> None:
         pass
 
     @abstractmethod
@@ -17,7 +17,7 @@ class Display(ABC):
 
 
 class MockDisplay(Display):
-    def set_image(self, image: Image) -> None:
+    def set_image(self, image: Image.Image) -> None:
         pass
 
     def close(self) -> None:
@@ -27,12 +27,12 @@ class MockDisplay(Display):
 class EInkDisplay(Display):
     def __init__(self) -> None:
         self._inky = Inky7Colour()
-        self._image_queue = Queue[Image]()
+        self._image_queue = Queue[Image.Image]()
         self._running = True
         self._thread = Thread(target=self._run)
         self._thread.start()
 
-    def set_image(self, image: Image) -> None:
+    def set_image(self, image: Image.Image) -> None:
         self._image_queue.put(image)
 
     def close(self) -> None:
