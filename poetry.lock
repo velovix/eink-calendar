@@ -543,8 +543,8 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.9"
-content-hash = "05f18ce0088904960432cc289a87c21f6b41904d989dc101469ba96611b1969a"
+python-versions = "^3.10"
+content-hash = "d389011e61cbfa1b4d4608625dcdbdbfda71b5250175d78fc4efe76928bc1303"
 
 [metadata.files]
 beautifulsoup4 = [
