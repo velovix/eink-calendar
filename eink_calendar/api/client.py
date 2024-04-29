@@ -23,7 +23,7 @@ class Client:
         calendars = self._service.calendarList().list().execute()
 
         now = datetime.datetime.utcnow()
-        time_min = now - datetime.timedelta(hours=3)
+        time_min = now - datetime.timedelta(hours=20)
 
         # Only look at calendars the user selects on their Google Calendar view
         selected_calendars = [c for c in calendars["items"] if c.get("selected", False)]
