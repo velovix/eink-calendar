@@ -7,6 +7,7 @@ from sdl2 import sdlttf
 class Text:
     def __init__(
         self,
+        *,
         renderer: sdl2.SDL_Renderer,
         font: sdlttf.TTF_Font,
         text: str,
@@ -23,7 +24,7 @@ class Text:
         width = ctypes.c_int(0)
         height = ctypes.c_int(0)
         sdlttf.TTF_SizeText(
-            font, text.encode(), ctypes.pointer(width), ctypes.pointer(height)
+            font, text.encode(), ctypes.pointer(width), ctypes.pointer(height),
         )
         self.rect = sdl2.SDL_Rect(x=x, y=y, w=width, h=height)
 

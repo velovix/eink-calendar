@@ -1,5 +1,5 @@
-from typing import Any
 import datetime
+from typing import Any
 
 
 class Event:
@@ -10,18 +10,17 @@ class Event:
         self.summary = event_data["summary"]
         if "dateTime" in start:
             self.start_time = datetime.datetime.strptime(
-                start["dateTime"], "%Y-%m-%dT%H:%M:%S%z"
+                start["dateTime"], "%Y-%m-%dT%H:%M:%S%z",
             )
             self.all_day = False
         else:
             self.start_time = datetime.datetime.strptime(start["date"], "%Y-%m-%d")
             self.all_day = True
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
-        else:
-            return False
+        return False
 
     def _hex_to_color(self, hex_: str) -> tuple[int, int, int]:
         hex_ = hex_.replace("#", "")

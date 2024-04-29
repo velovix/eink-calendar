@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
+from queue import Empty, Queue
 from threading import Thread
-from queue import Queue, Empty
 
 from inky import Inky7Colour
 from PIL import Image

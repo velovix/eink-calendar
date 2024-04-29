@@ -1,7 +1,7 @@
 import logging
+from queue import Empty, Queue
 from threading import Thread
-from queue import Queue, Empty
-from time import time, sleep
+from time import sleep, time
 from typing import Optional
 
 from httplib2 import HttpLib2Error

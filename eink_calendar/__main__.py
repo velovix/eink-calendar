@@ -1,17 +1,16 @@
-import faulthandler
-import signal
-from pathlib import Path
 import datetime
-from argparse import ArgumentParser
+import faulthandler
 import logging
+import signal
+from argparse import ArgumentParser
+from pathlib import Path
 from types import FrameType
 
 import sdl2
 from sdl2 import sdlttf
 
-from . import ui, api
-from .display import MockDisplay, EInkDisplay
-
+from . import api, ui
+from .display import EInkDisplay, MockDisplay
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 448
@@ -23,7 +22,7 @@ def main() -> int:
     logging.basicConfig(level=logging.INFO)
 
     parser = ArgumentParser(
-        description="Displays calendar events on an Inky 7-color display"
+        description="Displays calendar events on an Inky 7-color display",
     )
 
     parser.add_argument(
@@ -70,7 +69,10 @@ def main() -> int:
 
         today = datetime.date.today()
         day_text = ui.Text(
-            renderer, day_font, today.strftime("%A, %B %d"), sdl2.SDL_Color(0, 0, 0)
+            renderer=renderer,
+            font=day_font,
+            text=today.strftime("%A, %B %d"),
+            color=sdl2.SDL_Color(0, 0, 0),
         )
         day_text.set_position(int(SCREEN_WIDTH / 2 - day_text.rect.w / 2), 1)
         day_text.draw(renderer)

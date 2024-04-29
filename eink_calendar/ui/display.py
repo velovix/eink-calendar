@@ -11,9 +11,10 @@ class SDLError(Exception):
     pass
 
 
-def init_display(screen_width: int, screen_height: int) -> tuple[sdl2.SDL_Window, sdl2.SDL_Renderer]:
+def init_display(
+    screen_width: int, screen_height: int,
+) -> tuple[sdl2.SDL_Window, sdl2.SDL_Renderer]:
     """Initializes SDL and creates a window and renderer"""
-
     if sdl2.SDL_Init(sdl2.SDL_INIT_EVERYTHING) != 0:
         raise SDLError("Could not initialize SDL")
 
@@ -32,7 +33,7 @@ def init_display(screen_width: int, screen_height: int) -> tuple[sdl2.SDL_Window
         raise SDLError("Could not create window")
 
     renderer = sdl2.SDL_CreateRenderer(
-        window, -1, sdl2.SDL_RENDERER_ACCELERATED | sdl2.SDL_RENDERER_PRESENTVSYNC
+        window, -1, sdl2.SDL_RENDERER_ACCELERATED | sdl2.SDL_RENDERER_PRESENTVSYNC,
     )
     if not renderer:
         raise SDLError("Could not create renderer")
@@ -42,7 +43,6 @@ def init_display(screen_width: int, screen_height: int) -> tuple[sdl2.SDL_Window
 
 def screenshot(window: sdl2.SDL_Window, renderer: sdl2.SDL_Renderer) -> Image.Image:
     """Captures the contents of the window as a PIL image"""
-
     src = sdl2.SDL_GetWindowSurface(window)
     if not src:
         raise SDLError("Could not get window surface")

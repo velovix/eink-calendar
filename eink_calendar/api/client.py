@@ -1,7 +1,7 @@
+import datetime
 import logging
 import sys
 from pathlib import Path
-import datetime
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -46,9 +46,7 @@ class Client:
         # Filter for today's events
         events = [e for e in events if e.start_time.date() == datetime.date.today()]
 
-        events = self._sort_events(events)
-
-        return events
+        return self._sort_events(events)
 
     def _get_credentials(self) -> Credentials:
         creds = None
@@ -67,7 +65,7 @@ class Client:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    str(credentials_file), SCOPES
+                    str(credentials_file), SCOPES,
                 )
                 creds = flow.run_local_server(port=0)
             token.write_text(creds.to_json())
@@ -75,7 +73,7 @@ class Client:
         return creds
 
     def _sort_events(self, events: list[Event]) -> list[Event]:
-        """Sorts events by their start time, with all-day events always at the start"""
+        """Sorts events by their start time, with all-day events always at the start."""
         all_days = [e for e in events if e.all_day]
         all_days = sorted(all_days, key=lambda e: e.start_time)
         non_all_days = [e for e in events if not e.all_day]

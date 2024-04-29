@@ -1,5 +1,5 @@
-from .text import Text
+from .display import SDLError, init_display, screenshot
 from .event import Event
-from .display import init_display, screenshot, SDLError
+from .text import Text
 
 __all__ = ["Text", "Event", "init_display", "screenshot", "SDLError"]

@@ -10,7 +10,7 @@ packages = [ { include = "eink_calendar" } ]
 eink_calendar = "eink_calendar.__main__:main"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 inky = {extras = ["example-depends", "rpi"], version = "^1.5.0"}
 pillow = "^10.0.1"
 pysdl2 = "^0.9.16"
@@ -21,12 +21,27 @@ pyxdg = "^0.28"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.9.1"
 mypy = "^1.7.1"
+ruff = "^0.4.2"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff.lint]
+# Rules documentation: https://docs.astral.sh/ruff/rules/#flake8-bandit-s
+select = ["ALL"]
+ignore = [
+    "TRY400", "TRY003",  # Overly opinionated error handling (imo)
+    "D",  # Pypdocstyle is too aggressive (imo)
+    "FA",  # Not necessary, we target a modern Python version
+    "ANN", # MyPy plays this role
+    "EM", # Doesn't allow fstrings when making error messages
+    "PERF203", # Fixed in Python 3.11
+    "G004",  # Come on, we can use fstrings in logs
+    "DTZ",  # This project is okay with sloppy datetime usage
+    "PLR0913",  # With kwargs available, I believe we can do without this
+]
 
 [tool.mypy]
 strict = true
