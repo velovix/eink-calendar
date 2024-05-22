@@ -18,7 +18,7 @@ class Display(ABC):
 
 class MockDisplay(Display):
     def set_image(self, image: Image.Image) -> None:
-        pass
+        image.show("EInk Calendar")
 
     def close(self) -> None:
         pass

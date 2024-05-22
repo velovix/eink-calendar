@@ -380,14 +380,6 @@ python-versions = ">=3.6.8"
 diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
-name = "pysdl2"
-version = "0.9.16"
-description = "Python SDL2 bindings"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "pyxdg"
 version = "0.28"
 description = "PyXDG contains implementations of freedesktop.org standards in python."
@@ -512,6 +504,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "types-pillow"
+version = "10.2.0.20240520"
+description = "Typing stubs for Pillow"
+category = "dev"
+optional = false
+python-versions = ">=3.8"
+
+[[package]]
 name = "typing-extensions"
 version = "4.11.0"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -544,7 +544,7 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "d389011e61cbfa1b4d4608625dcdbdbfda71b5250175d78fc4efe76928bc1303"
+content-hash = "03423de0cf60a09c2a156362decdbe0165518e72ddc277ed178e9d935fb97c4a"
 
 [metadata.files]
 beautifulsoup4 = [
@@ -902,9 +902,6 @@ pyparsing = [
     {file = "pyparsing-3.1.2-py3-none-any.whl", hash = "sha256:f9db75911801ed778fe61bb643079ff86601aca99fcae6345aa67292038fb742"},
     {file = "pyparsing-3.1.2.tar.gz", hash = "sha256:a1bac0ce561155ecc3ed78ca94d3c9378656ad4c94c1270de543f621420f94ad"},
 ]
-pysdl2 = [
-    {file = "PySDL2-0.9.16.tar.gz", hash = "sha256:1027406badbecdd30fe56e800a5a76ad7d7271a3aec0b7acf780ee26a00f2d40"},
-]
 pyxdg = [
     {file = "pyxdg-0.28-py2.py3-none-any.whl", hash = "sha256:bdaf595999a0178ecea4052b7f4195569c1ff4d344567bccdc12dfdf02d545ab"},
     {file = "pyxdg-0.28.tar.gz", hash = "sha256:3267bb3074e934df202af2ee0868575484108581e6f3cb006af1da35395e88b4"},
@@ -971,6 +968,10 @@ spidev = [
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
+]
+types-pillow = [
+    {file = "types-Pillow-10.2.0.20240520.tar.gz", hash = "sha256:130b979195465fa1e1676d8e81c9c7c30319e8e95b12fae945e8f0d525213107"},
+    {file = "types_Pillow-10.2.0.20240520-py3-none-any.whl", hash = "sha256:33c36494b380e2a269bb742181bea5d9b00820367822dbd3760f07210a1da23d"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.11.0-py3-none-any.whl", hash = "sha256:c1f94d72897edaf4ce775bb7558d5b79d8126906a14ea5ed1635921406c0387a"},

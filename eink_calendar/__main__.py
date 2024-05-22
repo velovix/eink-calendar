@@ -6,8 +6,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 from types import FrameType
 
-import sdl2
-from sdl2 import sdlttf
+from PIL import Image, ImageDraw, ImageFont
 
 from . import api, ui
 from .display import EInkDisplay, MockDisplay
@@ -35,15 +34,9 @@ def main() -> int:
 
     api_client = api.Client()
 
-    try:
-        window, renderer = ui.init_display(SCREEN_WIDTH, SCREEN_HEIGHT)
-    except ui.SDLError as ex:
-        logging.error(f"{ex}")
-        return -1
-
     font_file = Path(__file__).parent / "lora.ttf"
-    day_font = sdlttf.TTF_OpenFont(str(font_file).encode(), 36)
-    times_font = sdlttf.TTF_OpenFont(str(font_file).encode(), 16)
+    day_font = ImageFont.truetype(str(font_file), 36)
+    times_font = ImageFont.truetype(str(font_file), 16)
 
     stop = False
 
@@ -59,26 +52,21 @@ def main() -> int:
     display = MockDisplay() if args.no_display else EInkDisplay()
 
     while not stop:
-        input_event = sdl2.SDL_Event()
-        sdl2.SDL_PollEvent(input_event)
-        if input_event.type == sdl2.SDL_QUIT:
-            stop = True
-
-        sdl2.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255)
-        sdl2.SDL_RenderClear(renderer)
+        image = Image.new("RGB", (SCREEN_WIDTH, SCREEN_HEIGHT), (255, 255, 255))
+        draw = ImageDraw.Draw(image)
 
         today = datetime.date.today()
         day_text = ui.Text(
-            renderer=renderer,
+            draw=draw,
             font=day_font,
             text=today.strftime("%A, %B %d"),
-            color=sdl2.SDL_Color(0, 0, 0),
+            color=(0, 0, 0),
         )
-        day_text.set_position(int(SCREEN_WIDTH / 2 - day_text.rect.w / 2), 1)
-        day_text.draw(renderer)
+        day_text.set_position(int(SCREEN_WIDTH / 2 - day_text.width / 2), 1)
+        day_text.draw()
 
         for ui_event in ui_events:
-            ui_event.draw(renderer)
+            ui_event.draw()
 
         api_events = event_stream.get()
         if api_events is not None:
@@ -86,19 +74,16 @@ def main() -> int:
 
             for api_event in api_events:
                 ui_event = ui.Event(
-                    renderer,
+                    draw,
                     times_font,
                     api_event,
                     (ui.Event.HEIGHT + ui.Event.PADDING_BOTTOM) * len(ui_events)
                     + ui.Event.START_Y,
                 )
-                ui_event.draw(renderer)
+                ui_event.draw()
                 ui_events.append(ui_event)
 
-            image = ui.screenshot(window, renderer)
             display.set_image(image)
-
-        sdl2.SDL_RenderPresent(renderer)
 
     logging.info("Waiting for event stream to stop...")
     event_stream.close()

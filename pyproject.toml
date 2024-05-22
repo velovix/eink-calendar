@@ -13,7 +13,6 @@ eink_calendar = "eink_calendar.__main__:main"
 python = "^3.10"
 inky = {extras = ["example-depends", "rpi"], version = "^1.5.0"}
 pillow = "^10.0.1"
-pysdl2 = "^0.9.16"
 google-api-python-client = "^2.100.0"
 google-auth-httplib2 = "^0.1.1"
 google-auth-oauthlib = "^1.1.0"
@@ -23,6 +22,7 @@ pyxdg = "^0.28"
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.7.1"
 ruff = "^0.4.2"
+types-pillow = "^10.2.0.20240520"
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,17 +1,14 @@
-import ctypes
-
-import sdl2
-from sdl2 import sdlttf
+from PIL import ImageDraw, ImageFont
 
 
 class Text:
     def __init__(
         self,
         *,
-        renderer: sdl2.SDL_Renderer,
-        font: sdlttf.TTF_Font,
+        draw: ImageDraw.ImageDraw,
+        font: ImageFont.FreeTypeFont,
         text: str,
-        color: sdl2.SDL_Color,
+        color: tuple[int, int, int],
         x: int = 0,
         y: int = 0,
         max_chars: int = 0,
@@ -19,18 +16,20 @@ class Text:
         if max_chars > 0 and len(text) > max_chars:
             text = text[: max_chars - 3] + "..."
 
-        surface = sdlttf.TTF_RenderText_Blended(font, text.encode(), color)
-        self.texture = sdl2.SDL_CreateTextureFromSurface(renderer, surface)
-        width = ctypes.c_int(0)
-        height = ctypes.c_int(0)
-        sdlttf.TTF_SizeText(
-            font, text.encode(), ctypes.pointer(width), ctypes.pointer(height),
-        )
-        self.rect = sdl2.SDL_Rect(x=x, y=y, w=width, h=height)
+        self._draw = draw
+        self._font = font
+        self._text = text
+        self._color = color
+        self._x = x
+        self._y = y
 
-    def draw(self, renderer: sdl2.SDL_Renderer) -> None:
-        sdl2.SDL_RenderCopy(renderer, self.texture, None, self.rect)
+        self.width = draw.textlength(text, font=font)
+
+    def draw(self) -> None:
+        self._draw.text(
+            (self._x, self._y), self._text, fill=self._color, font=self._font,
+        )
 
     def set_position(self, x: int, y: int) -> None:
-        self.rect.x = x
-        self.rect.y = y
+        self._x = x
+        self._y = y
