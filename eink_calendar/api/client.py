@@ -50,7 +50,7 @@ class Client:
 
     def _get_credentials(self) -> Credentials:
         creds = None
-        data_path = Path(BaseDirectory.save_data_path("eink_calendar"))
+        data_path = Path(BaseDirectory.save_data_path("eink-calendar"))
 
         credentials_file = data_path / "credentials.json"
         if not credentials_file.is_file():

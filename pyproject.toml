@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "eink-calendar"
-version = "0.1.0"
-description = ""
+version = "0.2.0"
+description = "Shows Google Calendar events on an Inky Impression display"
 authors = ["Tyler Compton <xaviosx@gmail.com>"]
 readme = "README.md"
 packages = [ { include = "eink_calendar" } ]
 
 [tool.poetry.scripts]
-eink_calendar = "eink_calendar.__main__:main"
+eink-calendar = "eink_calendar.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
