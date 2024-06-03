@@ -16,7 +16,7 @@ class EventStream:
         self._poll_delay = poll_delay
         self._output = Queue[list[Event]]()
         self._running = True
-        self._thread = Thread(target=self._run)
+        self._thread = Thread(target=self._run, daemon=True)
         self._thread.start()
 
     def get(self) -> Optional[list[Event]]:

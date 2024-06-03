@@ -29,7 +29,7 @@ class EInkDisplay(Display):
         self._inky = Inky7Colour()
         self._image_queue = Queue[Image.Image]()
         self._running = True
-        self._thread = Thread(target=self._run)
+        self._thread = Thread(target=self._run, daemon=True)
         self._thread.start()
 
     def set_image(self, image: Image.Image) -> None:
