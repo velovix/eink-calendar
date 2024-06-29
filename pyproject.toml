@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eink-calendar"
-version = "0.2.1"
+version = "0.2.2"
 description = "Shows Google Calendar events on an Inky Impression display"
 authors = ["Tyler Compton <xaviosx@gmail.com>"]
 readme = "README.md"
