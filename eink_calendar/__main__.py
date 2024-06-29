@@ -52,6 +52,9 @@ def main() -> int:
     display = MockDisplay() if args.no_display else EInkDisplay()
 
     while not stop:
+        event_stream.check_health()
+        display.check_health()
+
         image = Image.new("RGB", (SCREEN_WIDTH, SCREEN_HEIGHT), (255, 255, 255))
         draw = ImageDraw.Draw(image)
 

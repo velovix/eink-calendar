@@ -9,16 +9,23 @@ from PIL import Image
 class Display(ABC):
     @abstractmethod
     def set_image(self, image: Image.Image) -> None:
-        pass
+        ...
+
+    @abstractmethod
+    def check_health(self) -> None:
+        ...
 
     @abstractmethod
     def close(self) -> None:
-        pass
+        ...
 
 
 class MockDisplay(Display):
     def set_image(self, image: Image.Image) -> None:
         image.show("eInk Calendar")
+
+    def check_health(self) -> None:
+        pass
 
     def close(self) -> None:
         pass
@@ -34,6 +41,10 @@ class EInkDisplay(Display):
 
     def set_image(self, image: Image.Image) -> None:
         self._image_queue.put(image)
+
+    def check_health(self) -> None:
+        if not self._thread.is_alive():
+            raise RuntimeError("EInkDisplay thread died")
 
     def close(self) -> None:
         self._running = False

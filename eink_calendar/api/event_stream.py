@@ -25,6 +25,10 @@ class EventStream:
         except Empty:
             return None
 
+    def check_health(self) -> None:
+        if not self._thread.is_alive():
+            raise RuntimeError("EventStream thread died")
+
     def close(self) -> None:
         self._running = False
         self._thread.join()
